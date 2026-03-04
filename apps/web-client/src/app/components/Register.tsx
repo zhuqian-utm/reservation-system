@@ -48,16 +48,15 @@ export const Register = () => {
       localStorage.setItem('hilton_token', data.access_token);
       localStorage.setItem('hilton_user', JSON.stringify(data.user));
 
-      setTimeout(() => {
-        const user = authService.getCurrentUser();
-        if (user?.role === UserRole.EMPLOYEE) {
-          navigate('/dashboard');
-        } else if (user?.role === UserRole.EMPLOYEE) {
-          navigate('/reservation');
-        } else {
-          navigate('/');
-        }
-      }, 500);
+      if (data.role === UserRole.EMPLOYEE) {
+        navigate('/dashboard');
+      } else if (data.role === UserRole.EMPLOYEE) {
+        navigate('/reservation');
+      } else {
+        navigate('/');
+      }
+
+      window.location.reload();
     } catch (err: any) {
       setError(err.message);
     } finally {
