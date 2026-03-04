@@ -1,0 +1,699 @@
+@import "tailwindcss";
+
+:root {
+  --hilton-navy: #002d72;
+  --hilton-gold: #c4a163;
+  --hilton-gray: #f4f4f4;
+  --error-red: #d32f2f;
+  --success-green: #2e7d32;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--hilton-gray);
+  color: #333;
+}
+
+/* --- Layout & Navbar --- */
+nav {
+  background-color: var(--hilton-navy);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  margin-left: 1.5rem;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: var(--hilton-gold);
+}
+
+/* --- Containers --- */
+.container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+/* --- Cards (Forms & Dashboard) --- */
+.login-card, .reservation-container, .dashboard {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-top: 5px solid var(--hilton-gold);
+}
+
+/* --- Form Elements --- */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--hilton-navy);
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Critical for layout */
+}
+
+button {
+  background-color: var(--hilton-navy);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #001a4d;
+}
+
+button:disabled {
+  background-color: #ccc;
+}
+
+/* --- Dashboard Table --- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 2rem;
+}
+
+th {
+  text-align: left;
+  background-color: var(--hilton-gray);
+  padding: 15px;
+  border-bottom: 2px solid #ddd;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.status-requested { color: #f57c00; font-weight: bold; }
+.status-approved  { color: var(--success-green); font-weight: bold; }
+.status-cancelled { color: var(--error-red); font-weight: bold; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.8); /* Slate-900 with transparency */
+  backdrop-filter: blur(4px); /* Modern blur effect */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-card {
+  background: white;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-top: 4px solid #fbbf24; /* Hilton Gold accent */
+}
+
+.close-x {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.modal-title {
+  font-family: serif;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+
+.modal-subtitle {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-bottom: 2rem;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background: #0f172a;
+  color: white;
+  border: none;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.3s;
+}
+
+.btn-submit:hover {
+  background: #fbbf24;
+  color: #0f172a;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 5%;
+  height: 80px;
+  background: #0f172a; /* Deep Slate */
+  border-bottom: 1px solid rgba(251, 191, 36, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-logo {
+  font-family: serif;
+  color: #fbbf24;
+  letter-spacing: 4px;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.nav-links {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+}
+
+.nav-item {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: none;
+  color: #f1f5f9;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Luxury hover underline */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 1px;
+  bottom: -4px;
+  left: 0;
+  background-color: #fbbf24;
+  transition: width 0.3s ease;
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+.nav-item:hover {
+  color: #fbbf24;
+}
+
+/* Staff Portal Accent */
+.nav-item-staff {
+  color: #fbbf24;
+  border: 1px solid #fbbf24;
+  padding: 8px 16px;
+  border-radius: 0; /* Square edges feel more "High-end" */
+}
+
+.nav-item-staff:hover {
+  background: #fbbf24;
+  color: #0f172a !important;
+}
+
+/* Auth Section */
+.nav-auth {
+  display: flex;
+  align-items: center;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.user-email {
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.user-email strong {
+  color: #f1f5f9;
+}
+
+.btn-signin, .btn-logout {
+  background: transparent;
+  border: 1px solid rgba(241, 245, 249, 0.3);
+  color: #f1f5f9;
+  padding: 8px 20px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-signin:hover {
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+
+.btn-logout:hover {
+  border-color: #ef4444; /* Soft red for logout */
+  color: #ef4444;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  flex: 1; /* Makes both inputs equal width */
+  display: flex;
+  flex-direction: column;
+}
+
+.label-gold {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #fbbf24;
+  margin-bottom: 8px;
+}
+
+.input-luxury {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #334155;
+  color: #1e293b;
+  padding: 8px 0;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-luxury:focus {
+  border-bottom-color: #fbbf24;
+}
+
+.error-text {
+  color: #e11d48;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.select-wrapper {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #334155; /* The shared underline */
+  transition: border-color 0.3s;
+}
+
+.select-wrapper:focus-within {
+  border-bottom-color: #fbbf24; /* Gold highlight when selecting */
+}
+
+.select-number {
+  border: none !important; /* Remove individual underline */
+  width: 80px;
+  padding: 8px 0;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  color: #1e293b;
+  font-weight: 600;
+  appearance: none; /* Clean look, no arrow */
+}
+
+.select-label {
+  font-size: 16x;
+  color: #64748b;
+  margin-left: 8px;
+  pointer-events: none; /* Makes text unclickable */
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+.footer-note {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b; /* Subdued slate gray */
+  letter-spacing: 0.5px;
+}
+
+.register-link {
+  color: #fbbf24; /* Hilton Gold */
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 5px;
+  transition: all 0.2s ease;
+  border-bottom: 1px solid transparent;
+}
+
+.register-link:hover {
+  color: #d97706; /* Deeper amber on hover */
+  border-bottom-color: #d97706;
+  padding-bottom: 2px;
+}
+
+.register-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-card {
+  background: white;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.register-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.hilton-logo-text {
+  font-family: serif;
+  letter-spacing: 0.3em;
+  color: #0f172a;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.register-header h2 {
+  font-size: 1.25rem;
+  color: #1e293b;
+  margin-bottom: 0.5rem;
+}
+
+.register-header p {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.registration-form .form-row {
+  display: flex;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .registration-form .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.table-wrapper {
+  background: white;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  overflow-x: auto;
+}
+
+.hilton-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.hilton-table th {
+  background: #f8fafc;
+  padding: 16px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #64748b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.table-row {
+  transition: background 0.2s;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table-row:hover {
+  background: #fffdf5; /* Very subtle gold tint on hover */
+}
+
+.hilton-table td {
+  padding: 16px;
+  vertical-align: middle;
+}
+
+/* Guest Column */
+.guest-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.guest-name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.guest-email {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-requested { background: #fef3c7; color: #92400e; } /* Amber */
+.status-approved  { background: #dcfce7; color: #166534; } /* Green */
+.status-completed { background: #e0e7ff; color: #3730a3; } /* Indigo */
+.status-cancelled { background: #fee2e2; color: #991b1b; } /* Red */
+
+/* Action Buttons */
+.actions-cell {
+  text-align: right;
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.action-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-action {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 0.2s;
+}
+
+.btn-approve {
+  color: #166534;
+  border-color: #166534;
+}
+
+.btn-approve:hover {
+  background: #166534;
+  color: white;
+}
+
+.btn-complete {
+  color: #fbbf24;
+  border-color: #fbbf24;
+}
+
+.btn-complete:hover {
+  background: #fbbf24;
+  color: #0f172a;
+}
+
+.btn-cancel {
+  color: #94a3b8;
+}
+
+.btn-cancel:hover {
+  color: #ef4444;
+}
+
+.filter-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end; /* Aligns inputs and labels properly */
+  gap: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-bottom: none; /* Merges visually with the table header */
+  border-radius: 4px 4px 0 0;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1; /* Makes them grow equally */
+  max-width: 200px;
+}
+
+.filter-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #64748b;
+}
+
+.filter-input, .filter-select {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 2px;
+  background-color: white;
+  color: #0f172a;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+.filter-input:focus, .filter-select:focus {
+  border-color: #fbbf24; /* Hilton Gold focus */
+}
+
+.btn-reset {
+  padding: 8px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  height: 38px; /* Matches input height */
+  transition: color 0.2s;
+}
+
+.btn-reset:hover {
+  color: #ef4444;
+}
+
+/* Responsive: stack on small mobile screens */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .filter-group {
+    max-width: none;
+  }
+}
+
+.cancel-label-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  cursor: pointer; /* Makes the whole row feel interactive */
+  padding: 8px 0;
+}
+
+.checkbox-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hidden-checkbox {
+  /* Use opacity 0 and absolute position so it stays "clickable" 
+     underneath but remains invisible */
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-indicator {
+  width: 32px;
+  height: 32px;
+  border: 2px solid #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border-radius: 4px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Hover effect on the box when the parent label is hovered */
+.cancel-label-wrapper:hover .custom-indicator {
+  border-color: #94a3b8;
+}
+
+/* Checked state */
+.hidden-checkbox:checked + .custom-indicator {
+  border-color: #ef4444;
+  background: #ef4444;
+}
+
+.hidden-checkbox:checked + .custom-indicator .indicator-x {
+  color: white;
+  display: block; /* Ensure it's visible */
+}
+
+.indicator-x {
+  color: transparent;
+  font-size: 1.2rem;
+  font-weight: bold;
+}

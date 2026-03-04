@@ -1,0 +1,60 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ContactInfo {
+  email: String!
+  phone: String!
+}
+
+input CreateReservationInput {
+  arrivalTime: String!
+  guestEmail: String!
+  guestPhone: String
+  tableSize: Int!
+}
+
+type Mutation {
+  createReservation(input: CreateReservationInput!): Boolean!
+  updateReservation(input: UpdateReservationInput!): Boolean!
+  updateStatus(input: UpdateReservationStatusInput!): Boolean!
+}
+
+type Query {
+  browseGuestReservations(guestId: String!): [Reservation!]!
+  browseReservations(date: String!): [Reservation!]!
+}
+
+type Reservation {
+  arrivalTime: String!
+  contactInfo: ContactInfo!
+  createdAt: String!
+  guestId: String!
+  guestName: String!
+  id: ID!
+  status: ReservationStatus!
+  tableSize: Int!
+  updatedAt: String!
+}
+
+"""The current state of a Hilton restaurant booking"""
+enum ReservationStatus {
+  APPROVED
+  CANCELLED
+  COMPLETED
+  REQUESTED
+}
+
+input UpdateReservationInput {
+  arrivalTime: String!
+  guestEmail: String!
+  guestPhone: String
+  id: String!
+  status: ReservationStatus!
+  tableSize: Int!
+}
+
+input UpdateReservationStatusInput {
+  id: String!
+  status: ReservationStatus!
+}

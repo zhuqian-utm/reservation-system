@@ -1,96 +1,76 @@
-# ReservationSystem
+# Hilton Restaurant Reservation System
 
-<a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
+A high-performance, full-stack monorepo application designed for luxury hospitality management. This system allows guests to book tables and Hilton employees to manage reservations in real-time.
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is ready ✨.
+## 🏗️ Architecture & Tech Stack
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+This project follows **Clean Architecture** principles to ensure separation of concerns, scalability, and maintainability.
 
-## Run tasks
+* **Monorepo Management:** [Nx](https://nx.dev) (Shared libraries for types and data access)
+* **Backend:** [NestJS](https://nestjs.com) (Node.js framework)
+    * **API Layers:** Hybrid REST (for Auth) & GraphQL (for Business Logic)
+    * **Security:** Passport.js with JWT & Bcrypt password hashing
+* **Frontend:** [React](https://reactjs.org) with [Vite](https://vitejs.dev)
+    * **State & API:** [Apollo Client](https://www.apollographql.com/docs/react/)
+    * **Forms:** React Hook Form with Class-Validator integration
+* **Database:** [Couchbase](https://www.couchbase.com) (NoSQL)
+    * **Querying:** SQL++ (N1QL) for complex filtering and reporting
 
-To run tasks with Nx use:
+## 🚀 Getting Started
 
-```sh
-npx nx <target> <project-name>
+### 1. Infrastructure (Docker)
+Ensure you have Couchbase running. You can use the official Docker image:
+```bash
+docker run -d --name db -p 8091-8096:8091-8096 -p 11210:11210 couchbase
 ```
 
-For example:
+### 2. Installation
 
-```sh
-npx nx build myproject
+Install dependencies from the workspace root:
+
+```bash
+pnpm install
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### 3. Running the Apps
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Launch both the API and the Web Client simultaneously:
 
-## Add new projects
+```bash
+# Terminal 1: API Server
+npx nx serve api-server
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-To install a new plugin you can use the `nx add` command. Here's an example of adding the React plugin:
-```sh
-npx nx add @nx/react
+# Terminal 2: React Frontend
+npx nx serve web-client
 ```
 
-Use the plugin's generator to create new projects. For example, to create a new React app or library:
+## 🛠️ Key Functionalities
 
-```sh
-# Generate an app
-npx nx g @nx/react:app demo
+### 👤 Guest Experience
+- **Secure Auth**: JWT-based login and registration.
+- **Dynamic Booking**: Real-time table requests with automatic validation (Date/Time, Table Size).
+- **Personalized View**: Guests are restricted to the booking interface only.
 
-# Generate a library
-npx nx g @nx/react:lib some-lib
-```
+### 💼 Employee Management (Staff Portal)
+- **RBAC Protection**: The dashboard is locked behind a RolesGuard.
+- **Status Workflow**: Staff can transition bookings through: Requested → Approved → Completed/Cancelled.
+- **Instant Filtering**: Filter the entire day's bookings by status without page reloads.
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+### 📁Workspace Structure
+- **`apps/`**: Contains the two main applications:
+  - **`api-server/`**: The backend server built with NestJS, using both GraphQL and REST controllers.
+  - **`web-client/`**: The frontend application built with React, using Vite for bundling and Apollo Client for GraphQL integration.
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **`libs/`**: Contains shared libraries across the applications:
+  - **`data-access/`**: A shared library that includes models, repositories, and enums used by both applications.
 
-## Set up CI!
+- **`nx.json`**: The configuration file for the Nx monorepo.
 
-### Step 1
+- **`package.json`**: The unified file that manages dependencies across the entire monorepo.
 
-To connect to Nx Cloud, run the following command:
+## 🔒 Security Measures
 
-```sh
-npx nx connect
-```
-
-Connecting to Nx Cloud ensures a [fast and scalable CI](https://nx.dev/ci/intro/why-nx-cloud?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) pipeline. It includes features such as:
-
-- [Remote caching](https://nx.dev/ci/features/remote-cache?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task distribution across multiple machines](https://nx.dev/ci/features/distribute-task-execution?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Automated e2e test splitting](https://nx.dev/ci/features/split-e2e-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Task flakiness detection and rerunning](https://nx.dev/ci/features/flaky-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-### Step 2
-
-Use the following command to configure a CI workflow for your workspace:
-
-```sh
-npx nx g ci-workflow
-```
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Useful links
-
-Learn more:
-
-- [Learn more about this workspace setup](https://nx.dev/getting-started/intro#learn-nx?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- **N1QL Injection Prevention**: All database interactions use parameterized queries.
+- **Client-Side Guards**: React Router ProtectedRoute prevents unauthorized URL access.
+- **Server-Side Guards**: NestJS GqlAuthGuard and RolesGuard enforce permissions at the API level.
+- **Data Integrity**: class-validator ensures only "clean" data hits the database.

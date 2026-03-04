@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # 1. Couchbase Database
+  db:
+    image: couchbase/server:enterprise-7.2.0
+    container_name: reservation-db
+    hostname: db
+    ports:
+      - "8091-8096:8091-8096"
+      - "11210-11211:11210-11211"
+    environment:
+      - COUCHBASE_ADMIN_USERNAME=admin
+      - COUCHBASE_ADMIN_PASSWORD=000000
+    volumes:
+      - couchbase_data:/opt/couchbase/var
+
+  # 2. NestJS API Server
+  api-server:
+    image: hilton-api:latest
+    container_name: reservation-api
+    restart: always
+    environment:
+      # Use 'db' (the service name) as the hostname instead of localhost
+      - COUCHBASE_URL=couchbase://10.255.2.2 
+      - COUCHBASE_USER=admin
+      - COUCHBASE_PASS=000000
+      - JWT_SECRET=HILTON_SECRET_KEY_2026
+    depends_on:
+      - db
+
+  # 3. React Web Client
+  web-client:
+    image: hilton-web:latest
+    container_name: reservation-ui
+    ports:
+      - "80:80"
+    environment:
+      - VITE_API_URL=/graphql
+    depends_on:
+      - api-server
+
+volumes:
+  couchbase_data:
