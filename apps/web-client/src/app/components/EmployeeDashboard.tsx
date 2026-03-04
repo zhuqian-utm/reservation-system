@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useQuery, useMutation } from '@apollo/client/react';
 import { GetReservationsData } from '@reservation-system/data-access';
 import {
@@ -9,48 +9,53 @@ import { ReservationStatus } from '@reservation-system/data-access';
 
 export const EmployeeDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [sizeFilter, setSizeFilter] = useState('ALL');
   const [dateFilter, setDateFilter] = useState(
     new Date().toISOString().split('T')[0],
-  ); // Default to today
-  const [sizeFilter, setSizeFilter] = useState('ALL');
+  );
 
-  const today = new Date().toISOString().split('T')[0];
+  // 1. Improved Query with reactivity and cache policy
   const { data, loading, refetch } = useQuery<GetReservationsData>(
     GET_ALL_RESERVATIONS,
     {
-      variables: { date: today },
+      variables: { date: dateFilter },
+      fetchPolicy: 'cache-and-network',
+      notifyOnNetworkStatusChange: true, // Crucial for loading spinner on refetch
     },
   );
 
   const [updateStatus] = useMutation(UPDATE_STATUS);
 
   const handleStatusChange = async (id: string, newStatus: string) => {
-    await updateStatus({
-      variables: { input: { id, status: newStatus.toLocaleUpperCase() } },
-    });
-    refetch(); // Refresh the list after update
+    try {
+      await updateStatus({
+        variables: { input: { id, status: newStatus.toUpperCase() } },
+      });
+      // refetch uses the current dateFilter automatically
+      await refetch();
+    } catch (err) {
+      console.error('Failed to update status:', err);
+    }
   };
 
-  // Logic to filter the data before rendering
+  // 2. Cleaned up useMemo
   const filteredReservations = useMemo(() => {
     if (!data?.browseReservations) return [];
 
-    return data.browseReservations.filter((res) => {
-      // 1. Status Filter
+    return data.browseReservations.filter((res: any) => {
+      // Status Filter
       const matchesStatus =
-        statusFilter === 'ALL' || res.status === statusFilter;
+        statusFilter === 'ALL' ||
+        res.status === statusFilter.toLocaleUpperCase();
 
-      // 2. Date Filter (Comparing YYYY-MM-DD strings)
-      const resDate = new Date(res.arrivalTime).toISOString().split('T')[0];
-      const matchesDate = !dateFilter || resDate === dateFilter;
-
-      // 3. Size Filter
+      // Size Filter
       const matchesSize =
         sizeFilter === 'ALL' || res.tableSize === Number(sizeFilter);
 
-      return matchesStatus && matchesDate && matchesSize;
+      // NOTE: Date filtering is handled by the server via the Query variable
+      return matchesStatus && matchesSize;
     });
-  }, [data, statusFilter, dateFilter, sizeFilter]);
+  }, [data, statusFilter, sizeFilter]);
 
   if (loading) return <p>Loading Hilton Reservations...</p>;
 

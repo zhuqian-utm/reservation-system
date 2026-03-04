@@ -1,14 +1,12 @@
-import { useQuery, useMutation } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { GetGuestReservationsData } from '@reservation-system/data-access';
 import { ReservationStatus } from '@reservation-system/data-access';
-import {
-  MY_RESERVATIONS,
-  UPDATE_RESERVATION_STATUS,
-} from '../graphql/reservations.queries';
+import { MY_RESERVATIONS } from '../graphql/reservations.queries';
 import { authService } from '../services/auth.service';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DEFAULT_VALUES, ReservationModal } from './ReservationModal';
 import { formatTimeToString } from '../tools/timer';
+import { useLocation } from 'react-router-dom';
 
 export const GuestDashboard = () => {
   const [isEditOpen, setEditOpen] = useState(false);
@@ -22,7 +20,11 @@ export const GuestDashboard = () => {
     },
   );
 
-  const [updateStatus] = useMutation(UPDATE_RESERVATION_STATUS);
+  const location = useLocation();
+
+  useEffect(() => {
+    refetch();
+  }, [location.key]);
 
   const handleChange = (res: any) => {
     const arrivalDate = res.arrivalTime.slice(0, 10);
