@@ -16,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@reservation-system/data-access": ["libs/data-access/src/index.ts"],
-      "@reservation-system/data-access/server": ["libs/data-access/src/server.ts"]
+      "@reservation-system/data-access/server": ["libs/data-access/src/server.ts"],
+      "@reservation-system/shared": ["libs/shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -1,12 +1,9 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  ConflictException,
-} from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserRepository } from '@reservation-system/data-access/server';
 import { IUser, UserRole } from '@reservation-system/data-access';
+import { UserRepository } from '@reservation-system/data-access/server';
+import { AppConfigService } from '@reservation-system/shared';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -14,6 +11,7 @@ export class AuthService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
+    private appConfig: AppConfigService,
   ) {}
 
   /**
@@ -39,7 +37,10 @@ export class AuthService {
       id: uuidv4(),
       username,
       passwordHash,
-      role: code === 'Hilton2026' ? UserRole.EMPLOYEE : UserRole.GUEST,
+      role:
+        code === this.appConfig.employeeRegistrationCode
+          ? UserRole.EMPLOYEE
+          : UserRole.GUEST,
       fullName,
       contactInfo: {
         email: username,

@@ -1,5 +1,14 @@
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
-import { UseGuards } from '@nestjs/common';
+import {
+  UseGuards,
+  NotFoundException,
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
+import { v4 as uuidv4 } from 'uuid';
+
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -11,11 +20,13 @@ import {
   UpdateReservationInput,
   UpdateReservationStatusInput,
 } from './dto/reservation.input';
-import { v4 as uuidv4 } from 'uuid';
 
 @Resolver(() => Reservation)
 export class ReservationResolver {
-  constructor(private readonly reservationRepo: ReservationRepository) {}
+  constructor(
+    private readonly reservationRepo: ReservationRepository,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
+  ) {}
 
   /**
    * GUEST: Create a new reservation
@@ -28,7 +39,7 @@ export class ReservationResolver {
     @Context() context,
   ) {
     const user = context.req.user; // Attached by JwtStrategy.validate()
-    
+
     const newReservation = {
       id: uuidv4(),
       guestId: user.userId, // Matches the key in your JwtStrategy
@@ -56,7 +67,9 @@ export class ReservationResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateReservation(@Args('input') input: UpdateReservationInput) {
     const reservation = await this.reservationRepo.findById(input.id);
-    if (!reservation) throw new Error('Hilton Reservation not found');
+    if (!reservation) {
+      throw new NotFoundException('Hilton Reservation not found');
+    }
 
     const updated = {
       ...reservation,
@@ -72,10 +85,18 @@ export class ReservationResolver {
    * GUEST: Browse MY reservations
    * RolesGuard ensures ONLY guests can access this data.
    */
-  @Query(() => [Reservation]) 
+  @Query(() => [Reservation])
   @Roles(UserRole.GUEST)
   @UseGuards(JwtAuthGuard, RolesGuard)
-  async browseGuestReservations(@Args('guestId') guestId: string) {
+  async browseGuestReservations(
+    @Args('guestId') guestId: string,
+    @Context() context,
+  ) {
+    const user = context.req.user;
+    if (user.userId !== guestId) {
+      throw new BadRequestException('You can only view your own reservat');
+    }
+
     return this.reservationRepo.findAllByGuestId(guestId);
   }
 
@@ -83,11 +104,25 @@ export class ReservationResolver {
    * EMPLOYEE: Browse all reservations
    * RolesGuard ensures ONLY employees can access this data.
    */
-  @Query(() => [Reservation]) 
+  @Query(() => [Reservation])
   @Roles(UserRole.EMPLOYEE)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async browseReservations(@Args('date') date: string) {
-    return this.reservationRepo.findAllByDate(date);
+    const cacheKey = `reservations:${date}`;
+
+    // 1. Check if data is in cache
+    const cachedData = await this.cacheManager.get<Reservation[]>(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // 2. If not, get from database
+    const reservations = await this.reservationRepo.findAllByDate(date);
+
+    // 3. Save to cache for next time
+    await this.cacheManager.set(cacheKey, reservations, 300); 
+
+    return reservations;
   }
 
   /**
@@ -98,7 +133,9 @@ export class ReservationResolver {
   @UseGuards(JwtAuthGuard, RolesGuard)
   async updateStatus(@Args('input') input: UpdateReservationStatusInput) {
     const reservation = await this.reservationRepo.findById(input.id);
-    if (!reservation) throw new Error('Hilton Reservation not found');
+    if (!reservation) {
+      throw new NotFoundException('Hilton Reservation not found');
+    }
 
     const updated = {
       ...reservation,

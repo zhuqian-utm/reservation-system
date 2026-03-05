@@ -1,15 +1,19 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
+import { AppConfigService } from '@reservation-system/shared';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const appConfigService = app.get(AppConfigService);
 
   app.setGlobalPrefix('api');
 
+  const corsOrigins = appConfigService.corsOrigins;
+
   app.enableCors({
-    origin: 'http://localhost:4200', // Locale React App URL
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    origin: corsOrigins,
+    methods: 'GET,HEAD,PUT,POST,DELETE',
     credentials: true,
   });
 

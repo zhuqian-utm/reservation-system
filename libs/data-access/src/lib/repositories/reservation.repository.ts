@@ -29,8 +29,9 @@ export class ReservationRepository {
 
   async findAllByDate(date: string): Promise<IReservation[]> {
     const query = `
-      SELECT h.* FROM \`hilton_reservations\` h 
-      WHERE h.arrivalTime LIKE $1 || '%'
+      SELECT h.* FROM \`hilton_reservations\` h
+      WHERE DATE(h.arrivalTime) = DATE($1)
+      ORDER BY h.arrivalTime ASC
     `;
     const options = { parameters: [date] };
     const result = await this.db.getCluster().query(query, options);

@@ -26,6 +26,8 @@ services:
       - COUCHBASE_USER=admin
       - COUCHBASE_PASS=000000
       - JWT_SECRET=HILTON_SECRET_KEY_2026
+      - EMPLOYEE_REGISTRATION_CODE=Hilton2026
+      - CORS_ORIGINS=http://localhost:4200
     depends_on:
       - db
 

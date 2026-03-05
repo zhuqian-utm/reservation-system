@@ -5,6 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import * as couchbase from 'couchbase';
+import { AppConfigService } from '@reservation-system/shared';
 
 @Injectable()
 export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
@@ -13,15 +14,32 @@ export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
   private bucket!: couchbase.Bucket;
   private collection!: couchbase.Collection;
 
-  // These should ideally come from environment variables for Production/Cloud
-  private readonly connectionString =
-    process.env['COUCHBASE_URL'] || 'couchbase://localhost';
-  private readonly username = process.env['COUCHBASE_USER'] || 'admin';
-  private readonly password = process.env['COUCHBASE_PASS'] || '000000';
-  private readonly bucketName =
-    process.env['COUCHBASE_BUCKET'] || 'hilton_reservations';
+  private readonly connectionString?: string;
+  private readonly username?: string;
+  private readonly password?: string;
+  private readonly bucketName?: string;
+
+  constructor(private appConfig: AppConfigService) {
+    const { connectionString, username, password, bucketName } =
+      this.appConfig.couchbaseConfig;
+
+    this.connectionString = connectionString;
+    this.username = username;
+    this.password = password;
+    this.bucketName = bucketName;
+  }
 
   async onModuleInit() {
+    if (
+      !this.connectionString ||
+      !this.username ||
+      !this.password ||
+      !this.bucketName
+    ) {
+      throw new Error(
+        'Critical Error: Couchbase environment variables are missing!',
+      );
+    }
     try {
       this.logger.log('connect to Couchbase: ', this.connectionString);
       this.cluster = await couchbase.connect(this.connectionString, {
@@ -39,6 +57,8 @@ export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(
         `Successfully connected to Couchbase bucket: ${this.bucketName}`,
       );
+
+      await this.createIndexes();
     } catch (error) {
       this.logger.error(
         'Failed to connect to Couchbase',
@@ -62,5 +82,24 @@ export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
   async onModuleDestroy() {
     await this.cluster.close();
     this.logger.log('Couchbase connection closed.');
+  }
+
+  private async createIndexes() {
+    const indexes = [
+      `CREATE INDEX idx_reservations_date ON \`${this.bucketName}\`(DATE(arrivalTime), status) IF NOT EXISTS`,
+      `CREATE INDEX idx_reservations_guest ON \`${this.bucketName}\`(guestId) IF NOT EXISTS`,
+      `CREATE INDEX idx_reservations_status ON \`${this.bucketName}\`(status) IF NOT EXISTS`,
+    ];
+
+    for (const query of indexes) {
+      try {
+        await this.cluster.query(query);
+        this.logger.log(`Ensured index: ${query.split(' ')[2]}`);
+      } catch (err) {
+        this.logger.error(`Index creation failed`, err);
+      }
+    }
+
+    this.logger.log('Index check complete.');
   }
 }

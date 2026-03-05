@@ -74,3 +74,54 @@ npx nx serve web-client
 - **Client-Side Guards**: React Router ProtectedRoute prevents unauthorized URL access.
 - **Server-Side Guards**: NestJS GqlAuthGuard and RolesGuard enforce permissions at the API level.
 - **Data Integrity**: class-validator ensures only "clean" data hits the database.
+
+## 🏗️ Deployment Topology
+
+The following diagram illustrates the containerized architecture and network flow of the Hilton Reservation System.
+
+```mermaid
+graph TD
+    %% Node Definitions
+    User((User Browser))
+
+    subgraph Internet [Public Internet]
+        User
+    end
+
+    subgraph Docker_Bridge [Docker Compose Network]
+        direction TB
+
+        subgraph Web_Tier [Frontend Layer]
+            UI["web-client Container\nNginx:Alpine"]
+        end
+
+        subgraph App_Tier [Backend Layer]
+            API["api-server Container\nNestJS / Node 20"]
+        end
+
+        subgraph Data_Tier [Persistence Layer]
+            DB[(Couchbase Server\nEnterprise 7.2.0)]
+            Vol[("Docker Volume\ncouchbase_data")]
+        end
+
+        %% Internal Flows (Using Service Names)
+        UI -.->|Internal Proxy| API
+        API -->|Connects to 'db'| DB
+        DB --- Vol
+    end
+
+    %% External Access Points
+    User ==>|HTTP :80| UI
+    User -.->|Admin Console :8091| DB
+
+    %% Styling
+    classDef web fill:#2496ed,stroke:#000,stroke-width:1px,color:#fff;
+    classDef api fill:#673ab7,stroke:#000,stroke-width:1px,color:#fff;
+    classDef db fill:#ea2328,stroke:#000,stroke-width:1px,color:#fff;
+    classDef vol fill:#666,stroke:#fff,stroke-width:1px,color:#fff;
+
+    class UI web;
+    class API api;
+    class DB db;
+    class Vol vol;
+```

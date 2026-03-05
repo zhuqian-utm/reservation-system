@@ -5,17 +5,22 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtStrategy } from './jwt.strategy';
 import { DataAccessModule } from '../data-access.module';
+import { AppConfigModule, AppConfigService } from '@reservation-system/shared';
 
 @Module({
   imports: [
     PassportModule,
     // Configuration for JWT
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || 'HILTON_SECRET_KEY_2026', 
-      signOptions: { expiresIn: '1d' },
+    JwtModule.registerAsync({
+      imports: [AppConfigModule],
+      inject: [AppConfigService],
+      useFactory: (appConfig: AppConfigService) => ({
+        secret: appConfig.jwtSecret,
+        signOptions: { expiresIn: '1d' },
+      }),
     }),
     // This allows AuthModule to use the UserRepository from your shared lib
-    DataAccessModule, 
+    DataAccessModule,
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
