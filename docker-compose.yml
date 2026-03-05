@@ -12,19 +12,31 @@ services:
     environment:
       - COUCHBASE_ADMIN_USERNAME=admin
       - COUCHBASE_ADMIN_PASSWORD=000000
-    volumes:
       - couchbase_data:/opt/couchbase/var
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+        reservations:
+          memory: 1g
 
   # 2. NestJS API Server
   api-server:
     image: hilton-api:latest
     container_name: reservation-api
-    restart: always
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
     environment:
+      - NODE_ENV=production
       # Use 'db' (the service name) as the hostname instead of localhost
       - COUCHBASE_URL=couchbase://10.255.2.2 
       - COUCHBASE_USER=admin
       - COUCHBASE_PASS=000000
+      - COUCHBASE_BUCKET=hilton_reservations
       - JWT_SECRET=HILTON_SECRET_KEY_2026
       - EMPLOYEE_REGISTRATION_CODE=Hilton2026
       - CORS_ORIGINS=http://localhost:4200

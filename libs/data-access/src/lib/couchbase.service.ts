@@ -3,6 +3,7 @@ import {
   OnModuleInit,
   OnModuleDestroy,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import * as couchbase from 'couchbase';
 import { AppConfigService } from '@reservation-system/shared';
@@ -14,32 +15,20 @@ export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
   private bucket!: couchbase.Bucket;
   private collection!: couchbase.Collection;
 
-  private readonly connectionString?: string;
-  private readonly username?: string;
-  private readonly password?: string;
-  private readonly bucketName?: string;
+  private connectionString: string = '';
+  private username: string = '';
+  private password: string = '';
+  private bucketName: string = '';
 
   constructor(private appConfig: AppConfigService) {
-    const { connectionString, username, password, bucketName } =
-      this.appConfig.couchbaseConfig;
-
-    this.connectionString = connectionString;
-    this.username = username;
-    this.password = password;
-    this.bucketName = bucketName;
+    this.validateAndLoadConfig();
   }
 
   async onModuleInit() {
-    if (
-      !this.connectionString ||
-      !this.username ||
-      !this.password ||
-      !this.bucketName
-    ) {
-      throw new Error(
-        'Critical Error: Couchbase environment variables are missing!',
-      );
-    }
+    this.logger.log(
+      `Connecting to Couchbase: ${this.connectionString} - ${this.bucketName}`,
+    );
+
     try {
       this.logger.log('connect to Couchbase: ', this.connectionString);
       this.cluster = await couchbase.connect(this.connectionString, {
@@ -86,20 +75,42 @@ export class CouchbaseService implements OnModuleInit, OnModuleDestroy {
 
   private async createIndexes() {
     const indexes = [
-      `CREATE INDEX idx_reservations_date ON \`${this.bucketName}\`(DATE(arrivalTime), status) IF NOT EXISTS`,
-      `CREATE INDEX idx_reservations_guest ON \`${this.bucketName}\`(guestId) IF NOT EXISTS`,
-      `CREATE INDEX idx_reservations_status ON \`${this.bucketName}\`(status) IF NOT EXISTS`,
+      `CREATE INDEX idx_reservations_date IF NOT EXISTS ON \`${this.bucketName}\`(SUBSTR(arrivalTime, 0, 10), status)`,
+      `CREATE INDEX idx_reservations_guest IF NOT EXISTS ON \`${this.bucketName}\`(guestId)`,
+      `CREATE INDEX idx_reservations_status IF NOT EXISTS ON \`${this.bucketName}\`(status)`,
     ];
 
     for (const query of indexes) {
       try {
         await this.cluster.query(query);
-        this.logger.log(`Ensured index: ${query.split(' ')[2]}`);
+        const indexName = query.split(' ')[2];
+        this.logger.log(`Ensured index: ${indexName}`);
       } catch (err) {
         this.logger.error(`Index creation failed`, err);
       }
     }
 
     this.logger.log('Index check complete.');
+  }
+
+  private validateAndLoadConfig() {
+    const config = this.appConfig.couchbaseConfig;
+    const missingVars: string[] = [];
+
+    if (!config.connectionString) missingVars.push('COUCHBASE_URL');
+    if (!config.username) missingVars.push('COUCHBASE_USER');
+    if (!config.password) missingVars.push('COUCHBASE_PASS');
+    if (!config.bucketName) missingVars.push('COUCHBASE_BUCKET');
+
+    if (missingVars.length > 0) {
+      const errorMsg = `Couchbase Initialization Failed. Missing variables: [${missingVars.join(', ')}]`;
+      this.logger.error(errorMsg);
+      throw new NotFoundException(errorMsg);
+    }
+
+    this.connectionString = config.connectionString;
+    this.username = config.username;
+    this.password = config.password;
+    this.bucketName = config.bucketName;
   }
 }

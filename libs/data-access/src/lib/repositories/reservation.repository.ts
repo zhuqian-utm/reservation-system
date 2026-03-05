@@ -30,7 +30,7 @@ export class ReservationRepository {
   async findAllByDate(date: string): Promise<IReservation[]> {
     const query = `
       SELECT h.* FROM \`hilton_reservations\` h
-      WHERE DATE(h.arrivalTime) = DATE($1)
+      WHERE SUBSTR(h.arrivalTime, 0, 10) = $1
       ORDER BY h.arrivalTime ASC
     `;
     const options = { parameters: [date] };
