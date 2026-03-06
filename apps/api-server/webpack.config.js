@@ -1,25 +1,13 @@
-const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
-const { join } = require('path');
+const { composePlugins, withNx } = require('@nx/webpack');
 
-module.exports = {
-  output: {
-    path: join(__dirname, '../../dist/apps/api-server'),
-    clean: true,
-    ...(process.env.NODE_ENV !== 'production' && {
-      devtoolModuleFilenameTemplate: '[absolute-resource-path]',
-    }),
-  },
-  plugins: [
-    new NxAppWebpackPlugin({
-      target: 'node',
-      compiler: 'tsc',
-      main: './src/main.ts',
-      tsConfig: './tsconfig.app.json',
-      assets: ['./src/assets'],
-      optimization: false,
-      outputHashing: 'none',
-      generatePackageJson: true,
-      sourceMap: true,
-    }),
-  ],
-};
+module.exports = composePlugins(withNx(), (config) => {
+  // Fix for the absolute path template
+  if (process.env.NODE_ENV !== 'production') {
+    config.output.devtoolModuleFilenameTemplate = '[absolute-resource-path]';
+  }
+
+  // Ensure we aren't cleaning the folder in a way that breaks the watcher
+  config.output.clean = true;
+
+  return config;
+});

@@ -6,6 +6,7 @@ import {
   UPDATE_STATUS,
 } from '../graphql/employee.queries';
 import { ReservationStatus } from '@reservation-system/data-access';
+import { formatArrivalTime } from '../tools/timer';
 
 export const EmployeeDashboard = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
@@ -42,19 +43,24 @@ export const EmployeeDashboard = () => {
   const filteredReservations = useMemo(() => {
     if (!data?.browseReservations) return [];
 
-    return data.browseReservations.filter((res: any) => {
-      // Status Filter
-      const matchesStatus =
-        statusFilter === 'ALL' ||
-        res.status === statusFilter.toLocaleUpperCase();
+    return data.browseReservations
+      .filter((res: any) => {
+        // Status Filter
+        const matchesStatus =
+          statusFilter === 'ALL' ||
+          res.status === statusFilter.toLocaleUpperCase();
 
-      // Size Filter
-      const matchesSize =
-        sizeFilter === 'ALL' || res.tableSize === Number(sizeFilter);
+        // Size Filter
+        const matchesSize =
+          sizeFilter === 'ALL' || res.tableSize === Number(sizeFilter);
 
-      // NOTE: Date filtering is handled by the server via the Query variable
-      return matchesStatus && matchesSize;
-    });
+        // NOTE: Date filtering is handled by the server via the Query variable
+        return matchesStatus && matchesSize;
+      })
+      .sort(
+        (a, b) =>
+          new Date(b.arrivalTime).getTime() - new Date(a.arrivalTime).getTime(),
+      );
   }, [data, statusFilter, sizeFilter]);
 
   if (loading) return <p>Loading Hilton Reservations...</p>;
@@ -139,10 +145,7 @@ export const EmployeeDashboard = () => {
                 </td>
                 <td className="arrival-time">{res.arrivalTime.slice(0, 10)}</td>
                 <td className="arrival-time">
-                  {new Date(res.arrivalTime).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {formatArrivalTime(res.arrivalTime)}
                 </td>
                 <td>
                   <span
@@ -153,7 +156,7 @@ export const EmployeeDashboard = () => {
                 </td>
                 <td className="actions-cell">
                   {res.status ===
-                    ReservationStatus.REQUESTED.toLocaleUpperCase() && (
+                  ReservationStatus.REQUESTED.toLocaleUpperCase() ? (
                     <div className="action-group">
                       <button
                         className="btn-action btn-approve"
@@ -162,17 +165,6 @@ export const EmployeeDashboard = () => {
                         }
                       >
                         Approve
-                      </button>
-                      <button
-                        className="btn-action btn-complete"
-                        onClick={() =>
-                          handleStatusChange(
-                            res.id,
-                            ReservationStatus.COMPLETED,
-                          )
-                        }
-                      >
-                        Complete
                       </button>
                       <button
                         className="btn-action btn-cancel"
@@ -186,7 +178,22 @@ export const EmployeeDashboard = () => {
                         Cancel
                       </button>
                     </div>
-                  )}
+                  ) : res.status ===
+                    ReservationStatus.APPROVED.toLocaleUpperCase() ? (
+                    <div className="action-wrapper">
+                      <button
+                        className="btn-action btn-complete"
+                        onClick={() =>
+                          handleStatusChange(
+                            res.id,
+                            ReservationStatus.COMPLETED,
+                          )
+                        }
+                      >
+                        Complete
+                      </button>
+                    </div>
+                  ) : null}
                 </td>
               </tr>
             ))}

@@ -1,8 +1,7 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from '@apollo/client/react';
 import { CREATE_RESERVATION } from '../graphql/reservations.queries';
-import { getNextTime } from '../tools/timer';
+import { getAvailableDate, getAvailableTime } from '../tools/timer';
 
 export interface IFormInput {
   arrivalDate: string;
@@ -18,7 +17,7 @@ export const ReservationForm = () => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<IFormInput>();
+  } = useForm<IFormInput>({ mode: 'onChange' });
 
   // Apollo Mutation Hook
   const [createReservation, { loading, error }] =
@@ -50,8 +49,8 @@ export const ReservationForm = () => {
     }
   };
 
-  const today = new Date().toISOString().split('T')[0];
-  const nowTime = getNextTime();
+  const defaultArrivalDate = getAvailableDate();
+  const defaultArrivalTime = getAvailableTime();
 
   return (
     <div className="reservation-container">
@@ -64,8 +63,8 @@ export const ReservationForm = () => {
             <input
               type="date"
               className="input-luxury"
-              defaultValue={today}
-              min={today}
+              defaultValue={defaultArrivalDate}
+              min={defaultArrivalDate}
               {...register('arrivalDate', { required: 'Date is required' })}
             />
             {errors.arrivalDate && (
@@ -79,8 +78,24 @@ export const ReservationForm = () => {
             <input
               type="time"
               className="input-luxury"
-              defaultValue={nowTime}
-              {...register('arrivalTime', { required: 'Time is required' })}
+              defaultValue={defaultArrivalTime}
+              {...register('arrivalTime', {
+                required: 'Time is required',
+                validate: (value) => {
+                  if (!value) return 'Time is required';
+
+                  // Comparison works for "HH:mm" strings
+                  const isTooEarly = value < '10:00';
+                  const isTooLate = value > '19:00';
+
+                  if (isTooEarly || isTooLate) {
+                    return 'Please select a time between 10:00 AM and 7:00 PM';
+                  }
+                  return true;
+                },
+              })}
+              min="10:00"
+              max="19:00"
             />
             {errors.arrivalTime && (
               <span className="error-text">{errors.arrivalTime.message}</span>
