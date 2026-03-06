@@ -16,7 +16,7 @@ export class AuthService {
 
   /**
    * Requirement: RESTful Endpoints for authentication services
-   * Handles new Guest sign-ups for the Hilton system.
+   * Handles new Guest sign-ups for the system.
    */
   async register(
     username: string,

@@ -13,7 +13,7 @@ import { LoginModal } from './components/LoginModal';
 import { Navbar } from './components/Navbar';
 import { Register } from './components/Register';
 import { GuestDashboard } from './components/GuestDashboard';
-import HiltonWelcomePage from './components/Welcome';
+import WelcomePage from './components/Welcome';
 
 export default function App() {
   const [isLoginOpen, setLoginOpen] = useState(false);
@@ -36,7 +36,7 @@ export default function App() {
       <main className="container mx-auto py-12 px-4">
         <Routes>
           {/* Public Route */}
-          <Route path="/" element={<HiltonWelcomePage />} />
+          <Route path="/" element={<WelcomePage />} />
 
           {/* Protected Guest Route */}
           <Route

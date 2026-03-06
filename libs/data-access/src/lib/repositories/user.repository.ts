@@ -5,7 +5,7 @@ import { IUser } from '../models/user.model';
 @Injectable()
 export class UserRepository {
   private readonly logger = new Logger(UserRepository.name);
-  private readonly bucketName = 'hilton_reservations';
+  private readonly bucketName = 'bucket_reservations';
 
   constructor(private readonly db: CouchbaseService) {}
 
@@ -16,8 +16,8 @@ export class UserRepository {
   async findByUsername(username: string): Promise<IUser | null> {
     try {
       const query = `
-        SELECT h.* FROM \`${this.bucketName}\` h 
-        WHERE h.username = $1 AND h.type = "user"
+        SELECT b.* FROM \`${this.bucketName}\` b 
+        WHERE b.username = $1 AND b.type = "user"
       `;
       const options = { parameters: [username] };
       const result = await this.db.getCluster().query(query, options);

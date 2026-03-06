@@ -3,7 +3,7 @@ import { ReservationStatus } from '@reservation-system/data-access';
 
 registerEnumType(ReservationStatus, {
   name: 'ReservationStatus', 
-  description: 'The current state of a Hilton restaurant booking',
+  description: 'The current state of a restaurant booking',
 });
 
 @ObjectType()

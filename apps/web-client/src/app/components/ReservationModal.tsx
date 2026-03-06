@@ -35,9 +35,11 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<IEditFormInput>({
     defaultValues: { ...DEFAULT_VALUES },
+    mode: 'onChange',
   });
 
   // 1. Sync form when Modal opens or User changes
@@ -111,7 +113,31 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
               <input
                 type="time"
                 className="input-luxury"
-                {...register('arrivalTime', { required: 'Time is required' })}
+                {...register('arrivalTime', {
+                  required: 'Time is required',
+                  validate: (value) => {
+                    if (!value) return 'Time is required';
+
+                    // Comparison works for "HH:mm" strings
+                    const isTooEarly = value < '10:00';
+                    const isTooLate = value > '19:00';
+
+                    if (isTooEarly || isTooLate) {
+                      return 'Please select a time between 10:00 AM and 7:00 PM';
+                    }
+
+                    // Not Earlier Than Now
+                    const selectedDateTime = new Date(
+                      `${getValues('arrivalDate')}T${value}:00`,
+                    );
+                    const now = new Date();
+                    if (selectedDateTime < now) {
+                      return 'Arrival time cannot be in the past';
+                    }
+
+                    return true;
+                  },
+                })}
               />
               {errors.arrivalTime && (
                 <span className="error-text">{errors.arrivalTime.message}</span>
@@ -145,7 +171,6 @@ export const ReservationModal: React.FC<ReservationModalProps> = ({
             <label className="label-gold">Contact Email</label>
             <input
               type="email"
-              // placeholder="e.g. conrad@hilton.com"
               className="input-luxury"
               {...register('guestEmail', {
                 required: 'Email is required',

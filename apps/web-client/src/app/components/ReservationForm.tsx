@@ -16,6 +16,7 @@ export const ReservationForm = () => {
     register,
     handleSubmit,
     reset,
+    getValues,
     formState: { errors },
   } = useForm<IFormInput>({ mode: 'onChange' });
 
@@ -26,7 +27,7 @@ export const ReservationForm = () => {
   const onSubmit = async (data: IFormInput) => {
     try {
       const combinedDateTime = new Date(
-        `${data.arrivalDate}T${data.arrivalTime}`,
+        `${data.arrivalDate}T${data.arrivalTime}:00.000Z`,
       ).toISOString();
 
       const { arrivalDate, ...restOfData } = data;
@@ -54,7 +55,7 @@ export const ReservationForm = () => {
 
   return (
     <div className="reservation-container">
-      <h2>Book a Table at Hilton</h2>
+      <h2>Book a Table</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="form-row">
           {/* Date Picker */}
@@ -91,6 +92,16 @@ export const ReservationForm = () => {
                   if (isTooEarly || isTooLate) {
                     return 'Please select a time between 10:00 AM and 7:00 PM';
                   }
+
+                  // Not Earlier Than Now
+                  const selectedDateTime = new Date(
+                    `${getValues('arrivalDate')}T${value}:00`,
+                  );
+                  const now = new Date();
+                  if (selectedDateTime < now) {
+                    return 'Arrival time cannot be in the past';
+                  }
+
                   return true;
                 },
               })}
@@ -130,7 +141,6 @@ export const ReservationForm = () => {
             <label className="label-gold">Contact Email</label>
             <input
               type="email"
-              // placeholder="e.g. conrad@hilton.com"
               className="input-luxury"
               {...register('guestEmail', {
                 required: 'Email is required',

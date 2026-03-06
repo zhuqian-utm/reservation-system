@@ -15,7 +15,7 @@ export interface IUser {
   /** Unique identifier (UUID or Couchbase Document Key) */
   id: string;
 
-  /** Unique username, typically the email address for Hilton guests */
+  /** Unique username, typically the email address for guests */
   username: string;
 
   /** * Salted and hashed password. 
@@ -29,13 +29,13 @@ export interface IUser {
   /** Full name for display on the reservation list */
   fullName: string;
 
-  /** Contact details required for the Hilton business logic */
+  /** Contact details required for the business logic */
   contactInfo: {
     phone: string;
     email: string;
   };
 
-  /** Internal Hilton identification (Optional, only for Staff) */
+  /** Internal identification (Optional, only for Staff) */
   employeeId?: string;
 
   /** Audit timestamps for "Logging properly" requirement */

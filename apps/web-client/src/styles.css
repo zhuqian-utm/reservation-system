@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 :root {
-  --hilton-navy: #002d72;
-  --hilton-gold: #c4a163;
-  --hilton-gray: #f4f4f4;
+  --rsv-navy: #002d72;
+  --rsv-gold: #c4a163;
+  --rsv-gray: #f4f4f4;
   --error-red: #d32f2f;
   --success-green: #2e7d32;
 }
@@ -11,13 +11,13 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--hilton-gray);
+  background-color: var(--rsv-gray);
   color: #333;
 }
 
 /* --- Layout & Navbar --- */
 nav {
-  background-color: var(--hilton-navy);
+  background-color: var(--rsv-navy);
   color: white;
   padding: 1rem 2rem;
   display: flex;
@@ -35,7 +35,7 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--hilton-gold);
+  color: var(--rsv-gold);
 }
 
 /* --- Containers --- */
@@ -51,7 +51,7 @@ nav a:hover {
   padding: 2.5rem;
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  border-top: 5px solid var(--hilton-gold);
+  border-top: 5px solid var(--rsv-gold);
 }
 
 /* --- Form Elements --- */
@@ -64,7 +64,7 @@ label {
   margin-bottom: 0.5rem;
   font-weight: 600;
   font-size: 0.9rem;
-  color: var(--hilton-navy);
+  color: var(--rsv-navy);
 }
 
 input, select {
@@ -76,7 +76,7 @@ input, select {
 }
 
 button {
-  background-color: var(--hilton-navy);
+  background-color: var(--rsv-navy);
   color: white;
   padding: 12px 24px;
   border: none;
@@ -104,7 +104,7 @@ table {
 
 th {
   text-align: left;
-  background-color: var(--hilton-gray);
+  background-color: var(--rsv-gray);
   padding: 15px;
   border-bottom: 2px solid #ddd;
 }
@@ -139,7 +139,7 @@ td {
   max-width: 400px;
   position: relative;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  border-top: 4px solid #fbbf24; /* Hilton Gold accent */
+  border-top: 4px solid #fbbf24; /* Gold accent */
 }
 
 .close-x {
@@ -380,7 +380,7 @@ td {
 }
 
 .register-link {
-  color: #fbbf24; /* Hilton Gold */
+  color: #fbbf24; /* Gold */
   font-weight: 600;
   cursor: pointer;
   margin-left: 5px;
@@ -414,7 +414,7 @@ td {
   margin-bottom: 2.5rem;
 }
 
-.hilton-logo-text {
+.rsv-logo-text {
   font-family: serif;
   letter-spacing: 0.3em;
   color: #0f172a;
@@ -452,13 +452,13 @@ td {
   overflow-x: auto;
 }
 
-.hilton-table {
+.rsv-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
 }
 
-.hilton-table th {
+.rsv-table th {
   background: #f8fafc;
   padding: 16px;
   font-size: 0.7rem;
@@ -477,7 +477,7 @@ td {
   background: #fffdf5; /* Very subtle gold tint on hover */
 }
 
-.hilton-table td {
+.rsv-table td {
   padding: 16px;
   vertical-align: middle;
 }
@@ -608,7 +608,7 @@ td {
 }
 
 .filter-input:focus, .filter-select:focus {
-  border-color: #fbbf24; /* Hilton Gold focus */
+  border-color: #fbbf24; /* Gold focus */
 }
 
 .btn-reset {

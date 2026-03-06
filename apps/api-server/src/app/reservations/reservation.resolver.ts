@@ -68,7 +68,7 @@ export class ReservationResolver {
   async updateReservation(@Args('input') input: UpdateReservationInput) {
     const reservation = await this.reservationRepo.findById(input.id);
     if (!reservation) {
-      throw new NotFoundException('Hilton Reservation not found');
+      throw new NotFoundException('Reservation not found');
     }
 
     const updated = {
@@ -134,7 +134,7 @@ export class ReservationResolver {
   async updateStatus(@Args('input') input: UpdateReservationStatusInput) {
     const reservation = await this.reservationRepo.findById(input.id);
     if (!reservation) {
-      throw new NotFoundException('Hilton Reservation not found');
+      throw new NotFoundException('Reservation not found');
     }
 
     const updated = {

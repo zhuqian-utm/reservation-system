@@ -19,8 +19,8 @@ export class ReservationRepository {
 
   async findAllByGuestId(guestId: string): Promise<IReservation[]> {
     const query = `
-      SELECT h.* FROM \`hilton_reservations\` h 
-      WHERE h.guestId = $1
+      SELECT b.* FROM \`bucket_reservations\` b 
+      WHERE b.guestId = $1
     `;
     const options = { parameters: [guestId] };
     const result = await this.db.getCluster().query(query, options);
@@ -29,9 +29,9 @@ export class ReservationRepository {
 
   async findAllByDate(date: string): Promise<IReservation[]> {
     const query = `
-      SELECT h.* FROM \`hilton_reservations\` h
-      WHERE SUBSTR(h.arrivalTime, 0, 10) = $1
-      ORDER BY h.arrivalTime ASC
+      SELECT b.* FROM \`bucket_reservations\` b
+      WHERE SUBSTR(b.arrivalTime, 0, 10) = $1
+      ORDER BY b.arrivalTime ASC
     `;
     const options = { parameters: [date] };
     const result = await this.db.getCluster().query(query, options);

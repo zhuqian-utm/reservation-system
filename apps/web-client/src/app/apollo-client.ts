@@ -17,7 +17,7 @@ const httpLink = new HttpLink({
  * Requirement: Secure SPA Architecture (JWT Injection).
  */
 const authLink = new SetContextLink((prevContext, _operation) => {
-  const token = localStorage.getItem('hilton_token');
+  const token = localStorage.getItem('user_token');
 
   return {
     ...prevContext,

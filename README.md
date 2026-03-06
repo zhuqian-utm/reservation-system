@@ -1,6 +1,6 @@
-# Hilton Restaurant Reservation System
+# Restaurant Reservation System
 
-A high-performance, full-stack monorepo application designed for luxury hospitality management. This system allows guests to book tables and Hilton employees to manage reservations in real-time.
+A high-performance, full-stack monorepo application designed for luxury hospitality management. This system allows guests to book tables and employees to manage reservations in real-time.
 
 ## 🏗️ Architecture & Tech Stack
 
@@ -77,7 +77,7 @@ npx nx serve web-client
 
 ## 🏗️ Deployment Topology
 
-The following diagram illustrates the containerized architecture and network flow of the Hilton Reservation System.
+The following diagram illustrates the containerized architecture and network flow of the Reservation System.
 
 ```mermaid
 graph TD

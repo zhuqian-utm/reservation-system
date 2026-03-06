@@ -17,20 +17,20 @@ export const authService = {
     }
 
     // Centralized Storage Logic
-    localStorage.setItem('hilton_token', data.access_token);
-    localStorage.setItem('hilton_user', JSON.stringify(data.user));
+    localStorage.setItem('user_token', data.access_token);
+    localStorage.setItem('user_user', JSON.stringify(data.user));
 
     return data.user;
   },
 
   logout() {
-    localStorage.removeItem('hilton_token');
-    localStorage.removeItem('hilton_user');
+    localStorage.removeItem('user_token');
+    localStorage.removeItem('user_user');
     window.location.href = '/';
   },
 
   getCurrentUser() {
-    const user = localStorage.getItem('hilton_user');
+    const user = localStorage.getItem('user_user');
     return user ? JSON.parse(user) : null;
   },
 };

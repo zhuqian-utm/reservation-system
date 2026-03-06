@@ -11,7 +11,7 @@ export const Navbar = () => {
   return (
     <nav className="nav-container">
       {/* Branding - Optional but recommended for luxury feel */}
-      <div className="nav-logo">HILTON</div>
+      <div className="nav-logo">RESERVATION</div>
 
       <div className="nav-links">
         {user?.role === UserRole.EMPLOYEE ? (

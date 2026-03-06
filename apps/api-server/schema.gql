@@ -37,7 +37,7 @@ type Reservation {
   updatedAt: String!
 }
 
-"""The current state of a Hilton restaurant booking"""
+"""The current state of a restaurant booking"""
 enum ReservationStatus {
   APPROVED
   CANCELLED

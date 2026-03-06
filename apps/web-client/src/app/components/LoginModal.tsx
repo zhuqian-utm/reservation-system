@@ -45,9 +45,9 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
         throw new Error(data.message || 'Login failed');
       }
 
-      localStorage.setItem('hilton_token', data.access_token);
+      localStorage.setItem('user_token', data.access_token);
 
-      localStorage.setItem('hilton_user', JSON.stringify(data.user));
+      localStorage.setItem('user_user', JSON.stringify(data.user));
 
       // Close the modal first
 
@@ -77,7 +77,7 @@ export const LoginModal = ({ isOpen, onClose }: LoginModalProps) => {
           &times;
         </button>
 
-        <h2 className="modal-title">Hilton Portal</h2>
+        <h2 className="modal-title">Portal</h2>
         <p className="modal-subtitle">Sign in to manage your luxury stay.</p>
 
         <form onSubmit={handleLogin} className="modal-form">

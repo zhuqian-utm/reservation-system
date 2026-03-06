@@ -16,13 +16,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2g
+          memory: 3g
         reservations:
-          memory: 1g
+          memory: 2g
 
   # 2. NestJS API Server
   api-server:
-    image: hilton-api:latest
+    image: rsv-server:latest
     container_name: reservation-api
     deploy:
       restart_policy:
@@ -33,19 +33,19 @@ services:
     environment:
       - NODE_ENV=production
       # Use 'db' (the service name) as the hostname instead of localhost
-      - COUCHBASE_URL=couchbase://10.255.2.2 
+      - COUCHBASE_URL=couchbase://10.255.2.2
       - COUCHBASE_USER=admin
       - COUCHBASE_PASS=000000
-      - COUCHBASE_BUCKET=hilton_reservations
-      - JWT_SECRET=HILTON_SECRET_KEY_2026
-      - EMPLOYEE_REGISTRATION_CODE=Hilton2026
+      - COUCHBASE_BUCKET=bucket_reservations
+      - JWT_SECRET=JWT_SECRET_KEY_2026
+      - EMPLOYEE_REGISTRATION_CODE=EMP2026
       - CORS_ORIGINS=http://localhost:4200
     depends_on:
       - db
 
   # 3. React Web Client
   web-client:
-    image: hilton-web:latest
+    image: rsv-web:latest
     container_name: reservation-ui
     ports:
       - "80:80"

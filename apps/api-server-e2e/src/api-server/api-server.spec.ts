@@ -76,7 +76,7 @@ describe('Reservation (e2e)', () => {
     it('should prevent N1QL/SQL injection attempts', async () => {
       // Malicious string targeting N1QL
       const maliciousInput =
-        '"; DELETE FROM `hilton_reservations` WHERE "1"="1';
+        '"; DELETE FROM `bucket_reservations` WHERE "1"="1';
 
       const query = `
         query Browse($date: String!) {

@@ -45,8 +45,8 @@ export const Register = () => {
         throw new Error(data.message || 'Registration failed');
       }
 
-      localStorage.setItem('hilton_token', data.access_token);
-      localStorage.setItem('hilton_user', JSON.stringify(data.user));
+      localStorage.setItem('user_token', data.access_token);
+      localStorage.setItem('user_user', JSON.stringify(data.user));
 
       if (data.role === UserRole.EMPLOYEE) {
         navigate('/dashboard');
@@ -68,7 +68,7 @@ export const Register = () => {
     <div className="register-page-container">
       <div className="register-card">
         <div className="register-header">
-          <h1 className="hilton-logo-text">HILTON</h1>
+          <h1 className="rsv-logo-text">RESERVATION</h1>
           <h2>Create Your Account</h2>
           <p>Join our honors program for exclusive table reservations.</p>
         </div>

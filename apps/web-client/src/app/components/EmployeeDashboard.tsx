@@ -63,7 +63,7 @@ export const EmployeeDashboard = () => {
       );
   }, [data, statusFilter, sizeFilter]);
 
-  if (loading) return <p>Loading Hilton Reservations...</p>;
+  if (loading) return <p>Loading Reservations...</p>;
 
   return (
     <div className="dashboard">
@@ -122,7 +122,7 @@ export const EmployeeDashboard = () => {
       </div>
 
       <div className="table-wrapper">
-        <table className="hilton-table">
+        <table className="rsv-table">
           <thead>
             <tr>
               <th>Guest Details</th>

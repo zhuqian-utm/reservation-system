@@ -1,7 +1,7 @@
 import React from 'react';
 import { Mail, Phone, MapPin, Clock, CalendarDays } from 'lucide-react';
 
-// Hilton Brand Colors
+// Brand Colors
 const colors = {
   darkBlue: '#002C5F',
   gold: '#C5A065',
@@ -9,7 +9,7 @@ const colors = {
   white: '#FFFFFF',
 };
 
-const HiltonWelcomePage: React.FC = () => {
+const WelcomePage: React.FC = () => {
   return (
     <div
       style={{
@@ -30,7 +30,7 @@ const HiltonWelcomePage: React.FC = () => {
         <h1
           style={{ fontSize: '3rem', fontWeight: 'bold', marginBottom: '1rem' }}
         >
-          Welcome to Hilton Reservations
+          Welcome to Reservations
         </h1>
         <p
           style={{
@@ -200,11 +200,6 @@ const HiltonWelcomePage: React.FC = () => {
               <MapPin size={20} />
             </p>
 
-            <img
-              src="/Hilton_logo.png"
-              alt="Hilton Logo"
-              style={{ height: '300px' }}
-            />
           </div>
 
           <div>
@@ -228,7 +223,7 @@ const HiltonWelcomePage: React.FC = () => {
               <p
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
               >
-                <Mail size={18} /> dining.singapore@hilton.com
+                <Mail size={18} /> dining.singapore@gmail.com
               </p>
               <p
                 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -251,7 +246,7 @@ const HiltonWelcomePage: React.FC = () => {
         }}
       >
         <p style={{ color: '#777', fontSize: '0.9rem' }}>
-          &copy; {new Date().getFullYear()} Hilton. All rights reserved.
+          &copy; {new Date().getFullYear()}. All rights reserved.
         </p>
         <div
           style={{
@@ -275,4 +270,4 @@ const HiltonWelcomePage: React.FC = () => {
   );
 };
 
-export default HiltonWelcomePage;
+export default WelcomePage;
